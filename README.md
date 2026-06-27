@@ -5,7 +5,37 @@ This repository contains a functional implementation of an **inductive-to-deduct
 The workflow is evaluated using the UCI Student Performance dataset.
 
 ---
+---
 
+## 📊 Dataset Profile: Student Performance
+
+The pipeline utilizes the **Student Performance Dataset** from the UCI Machine Learning Repository. The data was collected during the 2005–2006 academic year from two Portuguese secondary schools: Gabriel Pereira (GP) and原始 Mariano Serra (MS). 
+
+It captures student demographic, social, and school-bound attributes specifically for the **Mathematics** cohort ($N = 395$ students).
+
+### 📐 Structural Attributes
+* **Instance Count:** 395 profiles
+* **Dimensionality:** 33 attributes (including demographic, family background, academic history, and lifestyle factors)
+* **Target Metric ($G3$):** Final grade, recorded on a 0–20 integer scale.
+
+### 🔑 Key Explanatory Variables Evaluated
+
+| Variable | Type | Description | Values / Scale |
+| :--- | :--- | :--- | :--- |
+| **`failures`** | Numeric | Past class failures | $n$ if $1 \le n < 3$, else $4$ if $n > 3$ |
+| **`absences`** | Numeric | Number of school absences | Count scale ($0$ to $75$) |
+| **`Medu`** | Numeric | Mother's education level | $0$: None; $1$: Primary; $2$: 5th–9th grade; $3$: Secondary; $4$: Higher |
+| **`goout`** | Numeric | Out-of-school socialization with friends | Likert scale ($1$: Very Low to $5$: Very High) |
+| **`studytime`** | Numeric | Weekly study time allocation | $1$: $<2$ hrs; $2$: $2\text{--}5$ hrs; $3$: $5\text{--}10$ hrs; $4$: $>10$ hrs |
+| **`higher`** | Categorical | Structural interest in pursuing higher education | Binary (`yes` or `no`) |
+
+### 📑 Academic Citation
+
+If you use this dataset or workflow in an academic framework, please cite the primary source:
+
+> Cortez, P., & Silva, A. M. G. (2008). *Using Data Mining to Predict Secondary School Student Performance.* In H. Brito & J. Teixeira (Eds.), Proceedings of 5th FUture BUsiness TEChnology Conference (FUBUTEC 2008) (pp. 5-12). Porto, Portugal: EUROSIS-ETI.
+
+---
 ## 🛠️ Pipeline Architecture
 
 1. **Inductive Feature Screening:** A Random Forest regressor filters through 30+ multi-dimensional behavioral and demographic variables to determine key non-linear anchors for final student grades ($G3$).
