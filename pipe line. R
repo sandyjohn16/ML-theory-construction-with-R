@@ -1,0 +1,79 @@
+# ==============================================================================
+# MACHINE LEARNING INFORMED THEORY BUILDING
+# Case Study: Student Performance Dataset
+# ==============================================================================
+
+# 1. Load Essential Libraries
+library(tidyverse)
+library(randomForest)
+library(dagitty)
+library(rpart)
+library(rpart.plot)
+
+# 2. Load Dataset
+# Note: Adjust path locally as needed
+student <- read.csv(
+  "C:/Users/sandr/Downloads/student+performance/student/student-mat.csv",
+  sep = ";"
+)
+
+cat("Dataset dimensions:\n")
+print(dim(student))
+
+# 3. Inductive Feature Selection (Random Forest)
+# Drop intermediate grades G1/G2 to prevent predictive dominance
+student_ml <- student %>% select(-G1, -G2)
+
+set.seed(123)
+rf_model <- randomForest(
+  G3 ~ .,
+  data = student_ml,
+  ntree = 500,
+  importance = TRUE
+)
+
+cat("\nRandom Forest Summary:\n")
+print(rf_model)
+
+# Sort and display variable importance metrics
+importance_table <- importance(rf_model)
+cat("\nSurfaced Variable Importance (Sorted):\n")
+print(importance_table[order(importance_table[,1], decreasing = TRUE), ])
+
+# Plot global importance metrics
+varImpPlot(rf_model, main = "Random Forest Variable Importance")
+
+# 4. Extract Non-Linear Structural Splits (Decision Tree)
+tree <- rpart(G3 ~ ., data = student_ml)
+rpart.plot(tree, main = "Decision Tree for Student Performance")
+
+# 5. Formal Theory Construction (Causal DAG via Dagitty)
+g <- dagitty("
+dag {
+Medu -> higher
+higher -> studytime
+studytime -> G3
+failures -> G3
+absences -> G3
+goout -> absences
+goout -> studytime
+}
+")
+
+# Map structural layout coordinates
+coordinates(g) <- list(
+  x = c(Medu = 1, higher = 2, studytime = 3, failures = 3, goout = 1, absences = 2, G3 = 4),
+  y = c(Medu = 3, higher = 3, studytime = 3, failures = 2, goout = 1, absences = 1, G3 = 2)
+)
+
+# Render formalized theory graph
+plot(g, main = "Machine Learning Informed Causal Theory")
+
+# 6. Deductive Structural Testing (OLS Linear Regression Validation)
+model <- lm(
+  G3 ~ studytime + failures + absences + Medu + higher + goout,
+  data = student
+)
+
+cat("\nConfirmatory Regression Results:\n")
+print(summary(model))
